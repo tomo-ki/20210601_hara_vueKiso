@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <button v-on:click="openModal">開く</button>
+    <open-modal v-show="showContent" v-on:from-child="closeModal">モーダルウィンドウ</open-modal>
+  </div>
+
+  <script>
+    Vue.component('open-modal', {
+      template: `
+    <div id="overlay" v-on:click.self="clickEvent">
+        <div id="content">
+          <p><slot></slot></p>
+          <button v-on:click.self="clickEvent">閉じる</button>
+        </div>
+    </div>
+    `,
+      methods: {
+        clickEvent: function () {
+          this.$emit('from-child')
+        }
+      }
+    })
+
+    new Vue({
+      el: '#app',
+      data: {
+        showContent: false
+      },
+      methods: {
+        openModal: function () {
+          this.showContent = true
+        },
+        closeModal: function () {
+          this.showContent = false
+        },
+      }
+    })
+  </script>
+</body>
+<style>
+  #content {
+    z-index: 10;
+    width: 40%;
+    padding: 30px;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+
+  #overlay {
+    z-index: 1;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+</style>
+
+</html>
